@@ -1,0 +1,32 @@
+{
+	"name": "@ouroboros/body",
+	"version": "0.1.0",
+	"description": "Classes to communicate with Ouroboros Coding Inc. body services",
+	"main": "index.js",
+	"types": "index.d.ts",
+	"scripts": {
+		"build": "tslint -p tsconfig.json && tsc",
+		"clean": "rm index.js index.d.ts",
+		"test": "echo \"Error: no test specified.\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ouroboroscoding/body-js.git"
+	},
+	"keywords": [
+		"ouroboros",
+		"body"
+	],
+	"author": "Chris Nasr <chris@ouroboroscoding.com>",
+	"license": "CUSTOM",
+	"bugs": {
+		"url": "https://github.com/ouroboroscoding/body-js/issues"
+	},
+	"devDependencies": {},
+	"dependencies": {
+		"@ouroboros/browser": "^0.1.2",
+		"@ouroboros/events": "^0.1.0",
+		"@ouroboros/tools": "^0.3.0"
+	},
+	"peerDependencies": {}
+}
