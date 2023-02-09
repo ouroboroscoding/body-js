@@ -1,6 +1,6 @@
 # @ouroboros/body
 
-[![npm version](https://img.shields.io/npm/v/@ouroboros/body.svg)](https://www.npmjs.com/package/@ouroboros/body) ![MIT License](https://img.shields.io/npm/l/@ouroboros/body.svg)
+[![npm version](https://img.shields.io/npm/v/@ouroboros/body.svg)](https://www.npmjs.com/package/@ouroboros/body)
 
 Shared javascript code for communication with all body parts (services) created
 by Ouroboros Coding Inc.
