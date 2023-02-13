@@ -393,63 +393,6 @@ function update(service, noun, data, opts={}) {
 	return request('put', _conf.domain + service + '/' + noun, data, opts);
 }
 
-/**
- * To Tree
- *
- * Converts array of rest field errors into a tree
- *
- * @name toTree
- * @access public
- * @param Array errors The list of errors
- * @return Object
- */
-function toTree(errors) {
-
-	// Init the return
-	let oRet = {}
-
-	// Go through each error
-	for(let i = 0; i < errors.length; ++i) {
-
-		// If the error field has a period
-		if(errors[i][0].includes('.')) {
-
-			// Split it
-			let lField = errors[i][0].split(/\.(.*)/)
-
-			// If we don't have the field already
-			if(!oRet[lField[0]]) {
-				oRet[lField[0]] = []
-			}
-
-			// Add the rest
-			oRet[lField[0]].push([lField[1], errors[i][1]]);
-		}
-
-		// Else it's a flat field
-		else {
-			if(errors[i][1] === 'is not a string') {
-				errors[i][1] = 'missing';
-			}
-			oRet[errors[i][0]] = errors[i][1];
-		}
-	}
-
-	// Go through all the errors we found
-	for(let k in oRet) {
-
-		// If we find an array
-		if(Array.isArray(oRet[k])) {
-
-			// Recurse
-			oRet[k] = toTree(oRet[k]);
-		}
-	}
-
-	// Return the Tree
-	return oRet;
-}
-
 // Default export
 const rest = {
 	init: init,
@@ -458,7 +401,6 @@ const rest = {
 	errorMessage: errorMessage,
 	read: read,
 	session: session,
-	toTree: toTree,
 	update: update
 };
 export default rest;
