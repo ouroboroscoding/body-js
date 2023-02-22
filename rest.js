@@ -153,18 +153,20 @@ function request(method, url, data, opts) {
 		url: url
 	}
 
-	// If it's a get request
-	if(method === 'get') {
+	// If we have any data
+	if(typeof data !== 'undefined' && data !== null) {
 
-		// And data was passed, add it as a param
-		if(typeof data !== 'undefined') {
-			oConfig['data'] = "d=" + encodeURIComponent(JSON.stringify(data));
+		// If it's a get request
+		if(method === 'get') {
+
+			// And data was passed, add it as a param
+			oConfig.data = "d=" + encodeURIComponent(JSON.stringify(data));
 		}
-	}
 
-	// Else it's any other method, stringify the data
-	else {
-		oConfig.data = JSON.stringify(data);
+		// Else it's any other method, stringify the data
+		else {
+			oConfig.data = JSON.stringify(data);
+		}
 	}
 
 	// Make the request and return the xhr
@@ -209,7 +211,7 @@ function store(token) {
  *								use_session: optional flag to allow for never using sessions
  * @return void
  */
-function init(domain, opts={}) {
+function init(domain, opts = {}) {
 
 	// Store the domains
 	_conf.domain = 'https://' + domain + '/';
@@ -283,7 +285,7 @@ function init(domain, opts={}) {
  * @param object opts			Optional flags that can be set
  * @return xhr
  */
-function create(service, noun, data, opts={}) {
+function create(service, noun, data, opts = {}) {
 	return request('post', _conf.domain + service + '/' + noun, data, opts);
 }
 
@@ -300,7 +302,7 @@ function create(service, noun, data, opts={}) {
  * @param object opts			Optional flags that can be set
  * @return xhr
  */
-function delete_(service, noun, data, opts={}) {
+function delete_(service, noun, data, opts = {}) {
 	return request('delete', _conf.domain + service + '/' + noun, data, opts);
 }
 
@@ -340,7 +342,7 @@ function errorMessage(error) {
  * @param object opts			Optional flags that can be set
  * @return xhr
  */
-function read(service, noun, data={}, opts={}) {
+function read(service, noun, data, opts = {}) {
 	return request('get', _conf.domain + service + '/' + noun, data, opts);
 }
 
@@ -389,7 +391,7 @@ function session(token) {
  * @param object opts			Optional flags that can be set
  * @return xhr
  */
-function update(service, noun, data, opts={}) {
+function update(service, noun, data, opts = {}) {
 	return request('put', _conf.domain + service + '/' + noun, data, opts);
 }
 
