@@ -7,7 +7,7 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-05
  */
-import { onError, onErrorCode, onRequested, onRequesting, responseStruct } from './';
+import { onError, onErrorCode, onRequested, onRequesting } from './';
 /**
  * Service
  *
@@ -15,7 +15,7 @@ import { onError, onErrorCode, onRequested, onRequesting, responseStruct } from 
  *
  * @name Service
  */
-export declare class Service {
+export default class Service {
     service: string;
     /**
      * Constructor
@@ -39,7 +39,7 @@ export declare class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    create(noun: string, data?: any): Promise<responseStruct>;
+    create(noun: string, data?: any): Promise<any>;
     /**
      * Delete
      *
@@ -51,7 +51,7 @@ export declare class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    delete(noun: string, data?: any): Promise<responseStruct>;
+    delete(noun: string, data?: any): Promise<any>;
     /**
      * On Error
      *
@@ -100,7 +100,18 @@ export declare class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    read(noun: string, data?: any): Promise<responseStruct>;
+    read(noun: string, data?: any): Promise<any>;
+    /**
+     * Session
+     *
+     * Set/Gets the current session token
+     *
+     * @name session
+     * @access public
+     * @param token The session to set
+     * @returns the session set
+     */
+    session(token?: string): string | null | void;
     /**
      * Update
      *
@@ -111,5 +122,5 @@ export declare class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    update(noun: string, data?: any): Promise<responseStruct>;
+    update(noun: string, data?: any): Promise<any>;
 }

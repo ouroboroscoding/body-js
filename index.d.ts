@@ -11,6 +11,7 @@ import * as constants from './constants';
 import * as errors from './errors';
 import * as regex from './regex';
 export { constants, errors, regex };
+export { default as Service } from './Service';
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
 export type callbackOptions = 'error' | 'errorCode' | 'requested' | 'requesting' | 'warning';
 export type onCallbacks = {
@@ -46,6 +47,7 @@ export type responseStruct = {
 export type responseErrorStruct = {
     code: number;
     msg?: any;
+    handle?: (message: string) => void;
 };
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => boolean;
@@ -78,7 +80,7 @@ declare class Body {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    request(action: actionOptions, service: string, noun: string, data: any): Promise<responseStruct>;
+    request(action: actionOptions, service: string, noun: string, data: any): Promise<any>;
     /**
      * Create
      *
@@ -90,7 +92,7 @@ declare class Body {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    create(service: string, noun: string, data?: any): Promise<responseStruct>;
+    create(service: string, noun: string, data?: any): Promise<any>;
     /**
      * Delete
      *
@@ -102,7 +104,7 @@ declare class Body {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    delete(service: string, noun: string, data?: any): Promise<responseStruct>;
+    delete(service: string, noun: string, data?: any): Promise<any>;
     /**
      * On
      *
@@ -174,7 +176,7 @@ declare class Body {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    read(service: string, noun: string, data?: any): Promise<responseStruct>;
+    read(service: string, noun: string, data?: any): Promise<any>;
     /**
      * Session
      *
@@ -197,7 +199,7 @@ declare class Body {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    update(service: string, noun: string, data?: any): Promise<responseStruct>;
+    update(service: string, noun: string, data?: any): Promise<any>;
     /**
      * Verbose Off
      *

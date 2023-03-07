@@ -23,7 +23,7 @@ import {
  *
  * @name Service
  */
-export class Service {
+export default class Service {
 
 	// The service associated with this instance
 	service: string;
@@ -53,7 +53,7 @@ export class Service {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	create(noun: string, data: any = null): Promise<responseStruct> {
+	create(noun: string, data: any = null): Promise<any> {
 		return body.request('create', this.service, noun, data);
 	}
 
@@ -68,7 +68,7 @@ export class Service {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	delete(noun: string, data: any = null): Promise<responseStruct> {
+	delete(noun: string, data: any = null): Promise<any> {
 		return body.request('delete', this.service, noun, data);
 	}
 
@@ -83,7 +83,6 @@ export class Service {
 	onError(callback: onError): void {
 		body.onError(callback);
 	}
-
 
 	/**
 	 * On Error Code
@@ -133,8 +132,22 @@ export class Service {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	read(noun: string, data: any = null): Promise<responseStruct> {
+	read(noun: string, data: any = null): Promise<any> {
 		return body.request('read', this.service, noun, data);
+	}
+
+	/**
+	 * Session
+	 *
+	 * Set/Gets the current session token
+	 *
+	 * @name session
+	 * @access public
+	 * @param token The session to set
+	 * @returns the session set
+	 */
+	session(token?: string): string | null | void {
+		return body.session(token);
 	}
 
 	/**
@@ -147,7 +160,7 @@ export class Service {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	update(noun: string, data: any = null): Promise<responseStruct> {
+	update(noun: string, data: any = null): Promise<any> {
 		return body.request('update', this.service, noun, data);
 	}
 }

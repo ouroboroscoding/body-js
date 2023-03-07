@@ -15,6 +15,7 @@ import * as regex from './regex';
 
 // Then export them
 export { constants, errors, regex };
+export { default as Service } from './Service';
 
 // Types
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
@@ -51,7 +52,8 @@ export type responseStruct = {
 };
 export type responseErrorStruct = {
 	code: number,
-	msg?: any
+	msg?: any,
+	handle?: (message: string) => void
 }
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => boolean;
@@ -113,7 +115,7 @@ class Body {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	request(action: actionOptions, service: string, noun: string, data: any): Promise<responseStruct> {
+	request(action: actionOptions, service: string, noun: string, data: any): Promise<any> {
 
 		// Generate the URL for the request
 		const url = `https://${this.domain}/${service}/${noun}`;
@@ -124,6 +126,14 @@ class Body {
 		// Set this
 		const $this = this;
 
+		// Init the request body
+		let xml = '';
+
+		// If we got data
+		if(data !== null) {
+			xml = JSON.stringify(data);
+		}
+
 		// Create a new Promise and return it
 		return new Promise((resolve: responseResolve, reject) => {
 
@@ -133,7 +143,7 @@ class Body {
 			// Handles an error based on whether an error handler is set
 			function handleError(message: string): void {
 				if($this.error) {
-					$this.error(message,  { action, data, res, url, xhr });
+					$this.error(message, { action, data, res, url, xhr });
 				} else {
 					throw new Error(message);
 				}
@@ -194,10 +204,13 @@ class Body {
 				}
 
 				// If we got an error
-				if('error' in res) {
+				if('error' in res && res.error) {
 
-					// If we don't have an onErrorCode callback, or it returns
-					//	false
+					// Add the handle error function to it
+					res.error.handle = handleError;
+
+					// If we don't have an onErrorCode callback, or it we do and
+					//	calling it returns false
 					if(!this.errorCode || this.errorCode(res.error as responseErrorStruct, { action, data, res, url, xhr }) === false) {
 						return reject(res.error);
 					}
@@ -240,7 +253,7 @@ class Body {
 			}
 
 			// Send the request
-			xhr.send();
+			xhr.send(xml);
 		});
 	}
 
@@ -255,7 +268,7 @@ class Body {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	create(service: string, noun: string, data: any = null): Promise<responseStruct> {
+	create(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('create', service, noun, data);
 	}
 
@@ -270,7 +283,7 @@ class Body {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	delete(service: string, noun: string, data: any = null): Promise<responseStruct> {
+	delete(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('delete', service, noun, data);
 	}
 
@@ -416,7 +429,7 @@ class Body {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	read(service: string, noun: string, data: any = null): Promise<responseStruct> {
+	read(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('read', service, noun, data);
 	}
 
@@ -454,7 +467,7 @@ class Body {
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	update(service: string, noun: string, data: any = null): Promise<responseStruct> {
+	update(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('update', service, noun, data);
 	}
 

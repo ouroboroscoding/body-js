@@ -13,6 +13,7 @@ import * as errors from './errors';
 import * as regex from './regex';
 // Then export them
 export { constants, errors, regex };
+export { default as Service } from './Service';
 // Actions to methods
 const ACTIONS_TO_METHODS = {
     create: 'POST',
@@ -66,6 +67,12 @@ class Body {
         let res;
         // Set this
         const $this = this;
+        // Init the request body
+        let xml = '';
+        // If we got data
+        if (data !== null) {
+            xml = JSON.stringify(data);
+        }
         // Create a new Promise and return it
         return new Promise((resolve, reject) => {
             // Create a new XMLHttpRequest
@@ -125,9 +132,11 @@ class Body {
                     handleError(`${ACTIONS_TO_METHODS[action]} ${url} returned invalid JSON: ${xhr.responseText}`);
                 }
                 // If we got an error
-                if ('error' in res) {
-                    // If we don't have an onErrorCode callback, or it returns
-                    //	false
+                if ('error' in res && res.error) {
+                    // Add the handle error function to it
+                    res.error.handle = handleError;
+                    // If we don't have an onErrorCode callback, or it we do and
+                    //	calling it returns false
                     if (!this.errorCode || this.errorCode(res.error, { action, data, res, url, xhr }) === false) {
                         return reject(res.error);
                     }
@@ -161,7 +170,7 @@ class Body {
                 this.requesting({ action, data, url, xhr });
             }
             // Send the request
-            xhr.send();
+            xhr.send(xml);
         });
     }
     /**

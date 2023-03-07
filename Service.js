@@ -16,7 +16,7 @@ import body from './';
  *
  * @name Service
  */
-export class Service {
+export default class Service {
     // The service associated with this instance
     service;
     /**
@@ -118,6 +118,19 @@ export class Service {
      */
     read(noun, data = null) {
         return body.request('read', this.service, noun, data);
+    }
+    /**
+     * Session
+     *
+     * Set/Gets the current session token
+     *
+     * @name session
+     * @access public
+     * @param token The session to set
+     * @returns the session set
+     */
+    session(token) {
+        return body.session(token);
     }
     /**
      * Update
