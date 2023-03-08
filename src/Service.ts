@@ -146,7 +146,7 @@ export default class Service {
 	 * @param token The session to set
 	 * @returns the session set
 	 */
-	session(token?: string): string | null | void {
+	session(token?: string | null): string | null | void {
 		return body.session(token);
 	}
 
