@@ -1,12 +1,14 @@
 {
 	"name": "@ouroboros/body",
-	"version": "0.1.3",
+	"version": "1.0.0",
 	"description": "Classes to communicate with Ouroboros Coding Inc. body services",
-	"main": "index.js",
-	"types": "index.d.ts",
+	"main": "src/index.js",
+	"types": "src/index.d.ts",
 	"scripts": {
-		"test": "echo \"Error: no test specified.\" && exit 1"
-	},
+			"build": "tslint -p tsconfig.json && tsc",
+			"clean": "rm src/*.js src/*.d.ts",
+			"test": "echo \"Error: no test specified.\" && exit 1"
+		},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ouroboroscoding/body-js.git"
@@ -20,10 +22,11 @@
 	"bugs": {
 		"url": "https://github.com/ouroboroscoding/body-js/issues"
 	},
-	"devDependencies": {},
-	"dependencies": {
-		"@ouroboros/browser": "^0.1.3",
-		"@ouroboros/events": "^0.1.0",
-		"@ouroboros/tools": "^0.3.2"
-	}
+	"devDependencies": {
+		"tslint": "^6.1.3",
+		"tslint-config-prettier": "^1.18.0",
+		"typescript": "^4.8.3"
+	},
+	"dependencies": {},
+	"peerDependencies": {}
 }
