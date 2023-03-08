@@ -63,7 +63,7 @@ const ACTIONS_TO_METHODS = {
 	create: 'POST',
 	delete: 'DELETE',
 	read: 'GET',
-	update: 'POST'
+	update: 'PUT'
 }
 
 /**
@@ -118,21 +118,13 @@ class Body {
 	request(action: actionOptions, service: string, noun: string, data: any): Promise<any> {
 
 		// Generate the URL for the request
-		const url = `https://${this.domain}/${service}/${noun}`;
+		let url = `https://${this.domain}/${service}/${noun}`;
 
 		// Init the response object
 		let res: responseStruct;
 
 		// Set this
 		const $this = this;
-
-		// Init the request body
-		let xml = '';
-
-		// If we got data
-		if(data !== null) {
-			xml = JSON.stringify(data);
-		}
 
 		// Create a new Promise and return it
 		return new Promise((resolve: responseResolve, reject) => {
@@ -235,6 +227,25 @@ class Body {
 					this.requested({ action, data, res, url, xhr });
 				}
 			});
+
+			// Init the request body
+			let xml = '';
+
+			// If we got data
+			if(data !== null) {
+
+				// If we're in GET mode
+				if(action === 'read') {
+
+					// Append the data as a param
+					url += '?d=' + encodeURIComponent(JSON.stringify(data));
+				}
+
+				// Else, DELETE, POST, PUT, just encode the data
+				else {
+					xml = JSON.stringify(data);
+				}
+			}
 
 			// Open the request
 			xhr.open(ACTIONS_TO_METHODS[action], url);

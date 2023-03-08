@@ -19,7 +19,7 @@ const ACTIONS_TO_METHODS = {
     create: 'POST',
     delete: 'DELETE',
     read: 'GET',
-    update: 'POST'
+    update: 'PUT'
 };
 /**
  * Body
@@ -62,17 +62,11 @@ class Body {
      */
     request(action, service, noun, data) {
         // Generate the URL for the request
-        const url = `https://${this.domain}/${service}/${noun}`;
+        let url = `https://${this.domain}/${service}/${noun}`;
         // Init the response object
         let res;
         // Set this
         const $this = this;
-        // Init the request body
-        let xml = '';
-        // If we got data
-        if (data !== null) {
-            xml = JSON.stringify(data);
-        }
         // Create a new Promise and return it
         return new Promise((resolve, reject) => {
             // Create a new XMLHttpRequest
@@ -157,6 +151,20 @@ class Body {
                     this.requested({ action, data, res, url, xhr });
                 }
             });
+            // Init the request body
+            let xml = '';
+            // If we got data
+            if (data !== null) {
+                // If we're in GET mode
+                if (action === 'read') {
+                    // Append the data as a param
+                    url += '?d=' + encodeURIComponent(JSON.stringify(data));
+                }
+                // Else, DELETE, POST, PUT, just encode the data
+                else {
+                    xml = JSON.stringify(data);
+                }
+            }
             // Open the request
             xhr.open(ACTIONS_TO_METHODS[action], url);
             // If we have a session token, add it as the Authorization header
