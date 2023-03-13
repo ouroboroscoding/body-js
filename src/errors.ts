@@ -12,6 +12,7 @@
 export const REST_REQUEST_DATA = 100
 export const REST_CONTENT_TYPE = 101
 export const REST_AUTHORIZATION = 102
+export const REST_LIST_TO_LONG = 103
 
 // Rest-OC Service related
 export const SERVICE_ACTION = 200
