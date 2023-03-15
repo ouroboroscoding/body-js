@@ -10,6 +10,7 @@
 export declare const REST_REQUEST_DATA = 100;
 export declare const REST_CONTENT_TYPE = 101;
 export declare const REST_AUTHORIZATION = 102;
+export declare const REST_LIST_TO_LONG = 103;
 export declare const SERVICE_ACTION = 200;
 export declare const SERVICE_STATUS = 201;
 export declare const SERVICE_CONTENT_TYPE = 202;
