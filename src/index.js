@@ -85,12 +85,14 @@ class Body {
                 if (this.verbose) {
                     console.log(`xhr.abort:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
                 }
+                handleError(`${ACTIONS_TO_METHODS[action]} ${url} was aborted`);
             });
             // Track errors
             xhr.addEventListener('error', event => {
                 if (this.verbose) {
                     console.log(`xhr.error:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
                 }
+                handleError(`${ACTIONS_TO_METHODS[action]} ${url} failed to connect`);
             });
             // Handle successful request
             xhr.addEventListener('load', (event) => {
