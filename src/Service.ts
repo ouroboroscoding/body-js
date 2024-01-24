@@ -12,9 +12,7 @@
 import body from './';
 
 // Types
-import {
-	onError, onErrorCode, onRequested, onRequesting, responseStruct
-} from './';
+import { onError, onErrorCode, onRequested, onRequesting } from './';
 
 /**
  * Service

@@ -13,6 +13,7 @@ export const REST_REQUEST_DATA = 100
 export const REST_CONTENT_TYPE = 101
 export const REST_AUTHORIZATION = 102
 export const REST_LIST_TO_LONG = 103
+export const REST_LIST_INVALID_URI = 104
 
 // Rest-OC Service related
 export const SERVICE_ACTION = 200
@@ -39,3 +40,4 @@ export const DB_DELETE_FAILED = 1103
 export const DB_UPDATE_FAILED = 1104
 export const DB_KEY_BEING_USED = 1105
 export const DB_ARCHIVED = 1106
+export const DB_REFERENCES = 1107
