@@ -60,7 +60,7 @@ export type responseReject = (error: responseErrorStruct) => boolean;
  * @name Body
  */
 declare class Body {
-    private domain;
+    domain: string;
     private error;
     private errorCode;
     private noSession;
