@@ -31,7 +31,7 @@ const ACTIONS_TO_METHODS = {
  */
 class Body {
     // The domain used to make requests to
-    domain = '';
+    _domain = '';
     // The function to call for http and related errors that need to be reported
     error = null;
     // The function to call if we get body errors
@@ -50,6 +50,18 @@ class Body {
     // The function to call if we get body warnings
     warning = null;
     /**
+     * Domain
+     *
+     * Set the domain
+     *
+     * @name domain
+     * @access public
+     * @param domain The name of the domain to connect to
+     */
+    domain(domain) {
+        this._domain = domain;
+    }
+    /**
      * Request
      *
      * Calls a request on the service given
@@ -62,7 +74,7 @@ class Body {
      */
     request(action, service, noun, data) {
         // Generate the URL for the request
-        let url = `https://${this.domain}/${service}/${noun}`;
+        let url = `https://${this._domain}/${service}/${noun}`;
         // Init the response object
         let res;
         // Set this
