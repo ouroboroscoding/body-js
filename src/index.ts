@@ -77,7 +77,7 @@ const ACTIONS_TO_METHODS = {
 class Body {
 
 	// The domain used to make requests to
-	private domain: string = '';
+	public domain: string = '';
 
 	// The function to call for http and related errors that need to be reported
 	private error: onError | null = null;
