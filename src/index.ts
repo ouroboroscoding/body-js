@@ -77,7 +77,7 @@ const ACTIONS_TO_METHODS = {
 class Body {
 
 	// The domain used to make requests to
-	public domain: string = '';
+	private _domain: string = '';
 
 	// The function to call for http and related errors that need to be reported
 	private error: onError | null = null;
@@ -105,6 +105,19 @@ class Body {
 	private warning: onWarning | null = null;
 
 	/**
+	 * Domain
+	 *
+	 * Set the domain
+	 *
+	 * @name domain
+	 * @access public
+	 * @param domain The name of the domain to connect to
+	 */
+	domain(domain: string): void {
+		this._domain = domain;
+	}
+
+	/**
 	 * Request
 	 *
 	 * Calls a request on the service given
@@ -118,7 +131,7 @@ class Body {
 	request(action: actionOptions, service: string, noun: string, data: any): Promise<any> {
 
 		// Generate the URL for the request
-		let url = `https://${this.domain}/${service}/${noun}`;
+		let url = `https://${this._domain}/${service}/${noun}`;
 
 		// Init the response object
 		let res: responseStruct;

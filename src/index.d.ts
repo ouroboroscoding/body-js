@@ -60,7 +60,7 @@ export type responseReject = (error: responseErrorStruct) => boolean;
  * @name Body
  */
 declare class Body {
-    domain: string;
+    private _domain;
     private error;
     private errorCode;
     private noSession;
@@ -69,6 +69,16 @@ declare class Body {
     private token;
     private verbose;
     private warning;
+    /**
+     * Domain
+     *
+     * Set the domain
+     *
+     * @name domain
+     * @access public
+     * @param domain The name of the domain to connect to
+     */
+    domain(domain: string): void;
     /**
      * Request
      *
