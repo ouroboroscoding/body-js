@@ -7,6 +7,8 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-03
  */
+// NPM modules
+import XMLHttpRequest from 'xhr2';
 // Import const files
 import * as constants from './constants';
 import * as errors from './errors';
@@ -107,7 +109,7 @@ class Body {
                 handleError(`${ACTIONS_TO_METHODS[action]} ${url} failed to connect`);
             });
             // Handle successful request
-            xhr.addEventListener('load', (event) => {
+            xhr.addEventListener('load', event => {
                 if (this.verbose) {
                     console.log(`xhr.load:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
                 }
@@ -156,7 +158,7 @@ class Body {
                 }
             });
             // Handle the request being finished
-            xhr.addEventListener('loadend', (event) => {
+            xhr.addEventListener('loadend', event => {
                 if (this.verbose) {
                     console.log(`xhr.loadend:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
                 }
