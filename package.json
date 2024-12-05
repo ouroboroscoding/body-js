@@ -1,12 +1,12 @@
 {
 	"name": "@ouroboros/body",
-	"version": "1.0.6",
+	"version": "1.1.0",
 	"description": "Classes to communicate with Ouroboros Coding Inc. body services",
-	"main": "src/index.js",
-	"types": "src/index.d.ts",
+	"main": "build/index.js",
+	"types": "build/index.d.ts",
 	"scripts": {
 			"build": "tslint -p tsconfig.json && tsc",
-			"clean": "rm src/*.js src/*.d.ts",
+			"clean": "rm build/*",
 			"for_local": "npm install; tslint -p tsconfig.json && tsc; rm -Rf node_modules",
 			"test": "echo \"Error: no test specified.\" && exit 1"
 		},

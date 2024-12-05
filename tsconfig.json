@@ -9,6 +9,7 @@
 		"lib": ["es2017", "DOM"],
 		"moduleResolution": "node",
 		"noEmit": false,
+		"outDir": "build",
 		"strict": true,
 		"target": "esnext"
 	},
