@@ -365,9 +365,9 @@ class Body {
 	}
 
 	/**
-	 * On No Session
+	 * On Error Code
 	 *
-	 * Sets callback for whenever a request gets a REST_AUTHORIZATION error
+	 * Sets callback for whenever a request gets an error back
 	 *
 	 * @name onNoSession
 	 * @access public
