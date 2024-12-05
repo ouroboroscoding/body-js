@@ -7,6 +7,7 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-03
  */
+import XMLHttpRequest from 'xhr2';
 import * as constants from './constants';
 import * as errors from './errors';
 import * as regex from './regex';

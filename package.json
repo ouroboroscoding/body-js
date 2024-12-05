@@ -5,11 +5,11 @@
 	"main": "build/index.js",
 	"types": "build/index.d.ts",
 	"scripts": {
-			"build": "tslint -p tsconfig.json && tsc",
-			"clean": "rm build/*",
-			"for_local": "npm install; tslint -p tsconfig.json && tsc; rm -Rf node_modules",
-			"test": "echo \"Error: no test specified.\" && exit 1"
-		},
+		"build": "tslint -p tsconfig.json && tsc",
+		"clean": "rm build/*",
+		"for_local": "npm install; tslint -p tsconfig.json && tsc; rm -Rf node_modules",
+		"test": "echo \"Error: no test specified.\" && exit 1"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/ouroboroscoding/body-js.git"
@@ -28,6 +28,7 @@
 		"tslint-config-prettier": "^1.18.0",
 		"typescript": "^4.8.3"
 	},
-	"dependencies": {},
-	"peerDependencies": {}
+	"dependencies": {
+		"xhr2": "^0.2.1"
+	}
 }
