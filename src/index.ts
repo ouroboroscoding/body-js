@@ -245,7 +245,7 @@ class Body {
 				// If we got an error
 				if('error' in result && result.error) {
 
-					// If we don't have an onErrorCode callback, or it we do and
+					// If we don't have an onErrorCode callback, or we do and
 					//  calling it returns false
 					if(!_.errorCode ||
 						_.errorCode(
@@ -255,6 +255,13 @@ class Body {
 					) {
 						return reject(result.error);
 					}
+				}
+
+				// If we got a warning and we have an onWarning callback
+				if('warning' in result && result.warning && _.warning) {
+					_.warning(
+						result.warning, { action, data, res, url }
+					);
 				}
 
 				// If we got data
@@ -365,7 +372,7 @@ class Body {
 	 *
 	 * Sets callback for whenever a request gets an error back
 	 *
-	 * @name onNoSession
+	 * @name onErrorCode
 	 * @access public
 	 * @param callback The function to call if there's an error
 	 */
@@ -438,6 +445,26 @@ class Body {
 
 		// Set the callback
 		this.requesting = callback;
+	}
+
+	/**
+	 * On Warning
+	 *
+	 * Sets callback for whenever a request gets a warning back
+	 *
+	 * @name onWarning
+	 * @access public
+	 * @param callback The function to call if there's a warning
+	 */
+	onWarning(callback: onWarning): void {
+
+		// Make sure the callback is function
+		if(typeof callback !== 'function') {
+			throw new Error('onWarning() called with an invalid callback');
+		}
+
+		// Set the callback
+		this.warning = callback;
 	}
 
 	/**

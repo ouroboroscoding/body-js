@@ -5,5 +5,7 @@
 - Removed `xhr2` from the project and replaced `XMLHttpRequest` with `fetch`.
 - Removed `xhr` from `onRequestedStruct` and `onRequestingStruct`.
 - Removed `Body.verbose_on()` and `Body.verbose_off()` functions and all references to `this.verbose` as well as all `console.log` calls.
-- Added `domain` and `on` functions to `Service` class, each passes their arguments to, and returns from, the `body` function of the same name.
+- Added `Body.onWarning` function to set `this.warning`.
+- Added check in `Body.request` to trigger `this.warning` if a warning is returned.
+- Added `domain`, `on`, and `onWarning` functions to `Service` class, each passes their arguments to, and returns from, the `body` function of the same name.
 - Changed `body.domain` to getter/setter instead of just setter.

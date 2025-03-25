@@ -139,7 +139,7 @@ declare class Body {
      *
      * Sets callback for whenever a request gets an error back
      *
-     * @name onNoSession
+     * @name onErrorCode
      * @access public
      * @param callback The function to call if there's an error
      */
@@ -174,6 +174,16 @@ declare class Body {
      * @param callback The function to call before making requests
      */
     onRequesting(callback: onRequesting): void;
+    /**
+     * On Warning
+     *
+     * Sets callback for whenever a request gets a warning back
+     *
+     * @name onWarning
+     * @access public
+     * @param callback The function to call if there's a warning
+     */
+    onWarning(callback: onWarning): void;
     /**
      * Read
      *

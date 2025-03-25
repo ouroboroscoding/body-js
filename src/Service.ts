@@ -13,7 +13,7 @@ import body from './';
 
 // Types
 import {
-	onCallbacks, onError, onErrorCode, onRequested, onRequesting
+	onCallbacks, onError, onErrorCode, onRequested, onRequesting, onWarning
 } from './';
 
 /**
@@ -147,6 +147,19 @@ export default class Service {
 	 */
 	onRequesting(callback: onRequesting): void {
 		return body.onRequesting(callback);
+	}
+
+	/**
+	 * On Warning
+	 *
+	 * Sets callback for whenever a request gets a warning back
+	 *
+	 * @name onWarning
+	 * @access public
+	 * @param callback The function to call if there's a warning
+	 */
+	onWarning(callback: onWarning): void {
+		return body.onWarning(callback);
 	}
 
 	/**

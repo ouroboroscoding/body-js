@@ -7,7 +7,7 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-05
  */
-import { onCallbacks, onError, onErrorCode, onRequested, onRequesting } from './';
+import { onCallbacks, onError, onErrorCode, onRequested, onRequesting, onWarning } from './';
 /**
  * Service
  *
@@ -111,6 +111,16 @@ export default class Service {
      * @param callback The function to call before making requests
      */
     onRequesting(callback: onRequesting): void;
+    /**
+     * On Warning
+     *
+     * Sets callback for whenever a request gets a warning back
+     *
+     * @name onWarning
+     * @access public
+     * @param callback The function to call if there's a warning
+     */
+    onWarning(callback: onWarning): void;
     /**
      * Read
      *
