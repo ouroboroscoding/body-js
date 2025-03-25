@@ -7,7 +7,7 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-05
  */
-import { onError, onErrorCode, onRequested, onRequesting } from './';
+import { onCallbacks, onError, onErrorCode, onRequested, onRequesting } from './';
 /**
  * Service
  *
@@ -52,6 +52,27 @@ export default class Service {
      * @param data The data associated with the request
      */
     delete(noun: string, data?: any): Promise<any>;
+    /**
+     * Domain
+     *
+     * Set/Gets the current domain
+     *
+     * @name domain
+     * @access public
+     * @param domain The domain to make all calls to
+     * @returns void
+     */
+    domain(domain?: string): void | string;
+    /**
+     * On
+     *
+     * Called to set multiple events at once
+     *
+     * @name on
+     * @access public
+     * @param callbacks A name to callback object to set multiple events
+     */
+    on(callbacks: onCallbacks): void;
     /**
      * On Error
      *
@@ -123,4 +144,22 @@ export default class Service {
      * @param data The data associated with the request
      */
     update(noun: string, data?: any): Promise<any>;
+    /**
+     * Verbose Off
+     *
+     * Called to turn verbose mode off
+     *
+     * @name verbose_off
+     * @access public
+     */
+    verbose_off(): void;
+    /**
+     * Verbose On
+     *
+     * Called to turn verbose mode on
+     *
+     * @name verbose_on
+     * @access public
+     */
+    verbose_on(): void;
 }

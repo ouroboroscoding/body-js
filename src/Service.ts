@@ -12,7 +12,9 @@
 import body from './';
 
 // Types
-import { onError, onErrorCode, onRequested, onRequesting } from './';
+import {
+	onCallbacks, onError, onErrorCode, onRequested, onRequesting
+} from './';
 
 /**
  * Service
@@ -68,6 +70,33 @@ export default class Service {
 	 */
 	delete(noun: string, data: any = null): Promise<any> {
 		return body.request('delete', this.service, noun, data);
+	}
+
+	/**
+	 * Domain
+	 *
+	 * Set/Gets the current domain
+	 *
+	 * @name domain
+	 * @access public
+	 * @param domain The domain to make all calls to
+	 * @returns void
+	 */
+	domain(domain?: string): void | string {
+		return body.domain(domain);
+	}
+
+	/**
+	 * On
+	 *
+	 * Called to set multiple events at once
+	 *
+	 * @name on
+	 * @access public
+	 * @param callbacks A name to callback object to set multiple events
+	 */
+	on(callbacks: onCallbacks): void {
+		return body.on(callbacks);
 	}
 
 	/**
@@ -160,5 +189,29 @@ export default class Service {
 	 */
 	update(noun: string, data: any = null): Promise<any> {
 		return body.request('update', this.service, noun, data);
+	}
+
+	/**
+	 * Verbose Off
+	 *
+	 * Called to turn verbose mode off
+	 *
+	 * @name verbose_off
+	 * @access public
+	 */
+	verbose_off(): void {
+		return body.verbose_off();
+	}
+
+	/**
+	 * Verbose On
+	 *
+	 * Called to turn verbose mode on
+	 *
+	 * @name verbose_on
+	 * @access public
+	 */
+	verbose_on(): void {
+		return body.verbose_on();
 	}
 }

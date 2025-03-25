@@ -7,7 +7,6 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-03
  */
-import XMLHttpRequest from 'xhr2';
 import * as constants from './constants';
 import * as errors from './errors';
 import * as regex from './regex';
@@ -30,14 +29,12 @@ export type onRequestedStruct = {
     data: any;
     res?: responseStruct;
     url: string;
-    xhr: XMLHttpRequest;
 };
 export type onRequesting = (info: onRequestingStruct) => void;
 export type onRequestingStruct = {
     action: actionOptions;
     data: any;
     url: string;
-    xhr: XMLHttpRequest;
 };
 export type onWarning = (warning: any, info: onRequestedStruct) => void;
 export type responseStruct = {
@@ -48,7 +45,6 @@ export type responseStruct = {
 export type responseErrorStruct = {
     code: number;
     msg?: any;
-    handle?: (message: string) => void;
 };
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => boolean;
@@ -73,13 +69,14 @@ declare class Body {
     /**
      * Domain
      *
-     * Set the domain
+     * Sets/Gets the domain
      *
      * @name domain
      * @access public
-     * @param domain The name of the domain to connect to
+     * @param @param domain The domain to set
+     * @returns the domain set
      */
-    domain(domain: string): void;
+    domain(domain?: string): string | void;
     /**
      * Request
      *
@@ -87,6 +84,7 @@ declare class Body {
      *
      * @name request
      * @access public
+     * @param action The action to take in the call
      * @param service The service to call
      * @param noun The noun to call on the service
      * @param data The data associated with the request

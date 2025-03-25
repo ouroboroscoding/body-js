@@ -6,10 +6,10 @@
 		"declaration": true,
 		"esModuleInterop": true,
 		"isolatedModules": true,
-		"lib": ["es2017", "DOM"],
+		"lib": ["es2018", "DOM"],
 		"moduleResolution": "node",
 		"noEmit": false,
-		"outDir": "build",
+		"outDir": "lib",
 		"strict": true,
 		"target": "esnext"
 	},
