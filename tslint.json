@@ -3,8 +3,5 @@
 		"tslint:recommended",
 		"tslint-config-prettier"
 	],
-	"rules": {
-		"comment-format": false,
-		"no-console": false
-	}
+	"rules": { }
 }

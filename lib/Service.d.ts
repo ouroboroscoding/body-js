@@ -144,22 +144,4 @@ export default class Service {
      * @param data The data associated with the request
      */
     update(noun: string, data?: any): Promise<any>;
-    /**
-     * Verbose Off
-     *
-     * Called to turn verbose mode off
-     *
-     * @name verbose_off
-     * @access public
-     */
-    verbose_off(): void;
-    /**
-     * Verbose On
-     *
-     * Called to turn verbose mode on
-     *
-     * @name verbose_on
-     * @access public
-     */
-    verbose_on(): void;
 }

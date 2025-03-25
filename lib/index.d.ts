@@ -209,24 +209,6 @@ declare class Body {
      * @param data The data associated with the request
      */
     update(service: string, noun: string, data?: any): Promise<any>;
-    /**
-     * Verbose Off
-     *
-     * Called to turn verbose mode off
-     *
-     * @name verbose_off
-     * @access
-     */
-    verbose_off(): void;
-    /**
-     * Verbose On
-     *
-     * Called to turn verbose mode on
-     *
-     * @name verbose_on
-     * @access
-     */
-    verbose_on(): void;
 }
 declare const body: Body;
 export default body;

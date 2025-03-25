@@ -83,7 +83,7 @@ class Body {
 	private errorCode: onErrorCode | null = null;
 
 	// The function to call when we get a status 401, or error code
-	//	REST_AUTHORIZATION
+	//  REST_AUTHORIZATION
 	private noSession: (() => void) | null = null;
 
 	// The function to call after any request is sent
@@ -154,7 +154,7 @@ class Body {
 		if(data !== null) {
 
 			// If we're in GET mode, append the data as a param "d" after
-			//	turning it into JSON
+			//  turning it into JSON
 			if(action === 'read') {
 				url += '?d=' + encodeURIComponent(JSON.stringify(data));
 			} else {
@@ -246,7 +246,7 @@ class Body {
 				if('error' in result && result.error) {
 
 					// If we don't have an onErrorCode callback, or it we do and
-					//	calling it returns false
+					//  calling it returns false
 					if(!_.errorCode ||
 						_.errorCode(
 							result.error as responseErrorStruct,
@@ -491,30 +491,6 @@ class Body {
 	 */
 	update(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('update', service, noun, data);
-	}
-
-	/**
-	 * Verbose Off
-	 *
-	 * Called to turn verbose mode off
-	 *
-	 * @name verbose_off
-	 * @access
-	 */
-	verbose_off(): void {
-		this.verbose = false;
-	}
-
-	/**
-	 * Verbose On
-	 *
-	 * Called to turn verbose mode on
-	 *
-	 * @name verbose_on
-	 * @access
-	 */
-	verbose_on(): void {
-		this.verbose = true;
 	}
 }
 

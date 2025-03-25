@@ -190,28 +190,4 @@ export default class Service {
 	update(noun: string, data: any = null): Promise<any> {
 		return body.request('update', this.service, noun, data);
 	}
-
-	/**
-	 * Verbose Off
-	 *
-	 * Called to turn verbose mode off
-	 *
-	 * @name verbose_off
-	 * @access public
-	 */
-	verbose_off(): void {
-		return body.verbose_off();
-	}
-
-	/**
-	 * Verbose On
-	 *
-	 * Called to turn verbose mode on
-	 *
-	 * @name verbose_on
-	 * @access public
-	 */
-	verbose_on(): void {
-		return body.verbose_on();
-	}
 }
