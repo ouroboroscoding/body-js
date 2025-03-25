@@ -19,10 +19,10 @@ export { default as Service } from './Service';
 
 // Types
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
-export type callbackOptions = 'error' | 'errorCode' | 'requested' | 'requesting' | 'warning';
 export type onCallbacks = {
 	error?: onError,
 	errorCode?: onErrorCode,
+	noSession?: () => void
 	requested?: onRequested,
 	requesting?: onRequesting,
 	warning?: onWarning
@@ -94,9 +94,6 @@ class Body {
 
 	// The token associated with the current session
 	private token: string | null = null;
-
-	// Flag for being verbose
-	private verbose: boolean = false;
 
 	// The function to call if we get body warnings
 	private warning: onWarning | null = null;
@@ -333,6 +330,9 @@ class Body {
 					continue;
 				case 'errorCode':
 					this.errorCode = callbacks.errorCode as onErrorCode;
+					continue;
+				case 'noSession':
+					this.noSession = callbacks.noSession as () => void;
 					continue;
 				case 'requested':
 					this.requested = callbacks.requested as onRequested;

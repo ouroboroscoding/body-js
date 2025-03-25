@@ -13,10 +13,10 @@ import * as regex from './regex';
 export { constants, errors, regex };
 export { default as Service } from './Service';
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
-export type callbackOptions = 'error' | 'errorCode' | 'requested' | 'requesting' | 'warning';
 export type onCallbacks = {
     error?: onError;
     errorCode?: onErrorCode;
+    noSession?: () => void;
     requested?: onRequested;
     requesting?: onRequesting;
     warning?: onWarning;
@@ -64,7 +64,6 @@ declare class Body {
     private requested;
     private requesting;
     private token;
-    private verbose;
     private warning;
     /**
      * Domain
