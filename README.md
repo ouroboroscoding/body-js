@@ -34,7 +34,9 @@ foo@bar:~$ npm install @ouroboros/body
 
 ## Body
 This is the primary export of the library, it provides a simple asynchronous
-way to communicate with [body_oc](https://pypi.org/project/body_oc/)
+way to communicate with [body_oc](https://pypi.org/project/body_oc/) services
+that have exposed themselves to http requests with the pattern
+`https://domain.com/service/noun/`.
 
 ```javascript
 import body, { errors } from '@ouroboros/body';
@@ -110,21 +112,24 @@ usable Javascript data your project can use.
 It has 4 arguments: `action`, `service`, `noun`, and `data`.
 
 `action` Is the type of request you're making, it must be one of the 4 following
-strings, **create**, **read**, **update**, or **delete**.
+strings, **create**, **read**, **update**, or **delete**. These correspond to
+**POST**, **GET**, **PUT**, and **DELETE** respectively.
 
 `service` is the name of the service you want to connect to. This is the name
 you have given your service and unique to your project.
 
 `noun` is the name of the request on the service you want to call. This is the
-name you have given the request and unique to your project.
+name you have given the request and unique to your project. They correspond to
+the methods on the server side by replacing _ with /. `users/by/id` on the
+client side would be `users_by_id` on the server side.
 
-`data` is the JSON safe data you wish to send along with the request. If your
-data won't go through `JSON.stringify()` then you can't send it with a request.
+`data` is the JSON safe data you are sending with the request. If your data
+won't go through `JSON.stringify()` then you can't send it with a request.
 
 Most of the time you won't see `request` used directly. Instead you'll see one
 of `create`, `delete`, `read`, or `update` which work exactly like `request`
-with the `action` substituted for the name of the function. So the `body.read`
-call in the example above could have also been written as
+with the `action` substituted for the function name. So the `body.read` call in
+the [example](#body) could have also been written as
 ```javascript
     body.request(
 	  'read',
@@ -238,8 +243,8 @@ const myService = new Service('my_service');
 export default myService;
 ```
 
-And you could provide that file to anyone wanting to use your service so they
-could use it like so.
+And you could provide that file to anyone wanting to use your service. Making
+the following...
 ```javascript
 import myService from 'my_service';
 myService.domain('rest.mydomain.com');
@@ -252,8 +257,7 @@ myService.create(
   { /* request data */ }
 );
 ```
-
-This is equivalent to the following
+... would be equivalent to this
 ```javascript
 import body from '@ouroboros/body';
 body.domain('rest.mydomain.com');
@@ -269,9 +273,8 @@ body.create(
 ```
 
 Anything you can do with `body` you can do with a `Service` instance as it
-contains all the same functions as `body` with all the same arguments except for
-when a `service` argument is required, it's filled in by the name of the
-`Service`.
+contains all the same functions as `body`. The only difference is that any
+function that expects a `service` argument is passed the name of the `Service`.
 
 [ [top](#ouroborosbody), [contents](#contents) ]
 
