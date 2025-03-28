@@ -7,8 +7,7 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-05
  */
-// Local modules
-import body from './';
+import { onCallbacks, onError, onErrorCode, onRequested, onRequesting, onWarning } from './';
 /**
  * Service
  *
@@ -17,8 +16,7 @@ import body from './';
  * @name Service
  */
 export default class Service {
-    // The service associated with this instance
-    service;
+    service: string;
     /**
      * Constructor
      *
@@ -29,9 +27,7 @@ export default class Service {
      * @param service The name of the service to make all requests to
      * @returns a new instance
      */
-    constructor(service) {
-        this.service = service;
-    }
+    constructor(service: string);
     /**
      * Create
      *
@@ -43,9 +39,7 @@ export default class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    create(noun, data = null) {
-        return body.request('create', this.service, noun, data);
-    }
+    create(noun: string, data?: any): Promise<any>;
     /**
      * Delete
      *
@@ -57,9 +51,28 @@ export default class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    delete(noun, data = null) {
-        return body.request('delete', this.service, noun, data);
-    }
+    delete(noun: string, data?: any): Promise<any>;
+    /**
+     * Domain
+     *
+     * Set/Gets the current domain
+     *
+     * @name domain
+     * @access public
+     * @param domain The domain to make all calls to
+     * @returns void
+     */
+    domain(domain?: string): void | string;
+    /**
+     * On
+     *
+     * Called to set multiple events at once
+     *
+     * @name on
+     * @access public
+     * @param callbacks A name to callback object to set multiple events
+     */
+    on(callbacks: onCallbacks): void;
     /**
      * On Error
      *
@@ -68,9 +81,7 @@ export default class Service {
      * @name onError
      * @access public
      */
-    onError(callback) {
-        body.onError(callback);
-    }
+    onError(callback: onError): void;
     /**
      * On Error Code
      *
@@ -79,9 +90,7 @@ export default class Service {
      * @name onErrorCode
      * @access public
      */
-    onErrorCode(callback) {
-        body.onErrorCode(callback);
-    }
+    onErrorCode(callback: onErrorCode): void;
     /**
      * On Requested
      *
@@ -91,9 +100,7 @@ export default class Service {
      * @access public
      * @param callback The function to call after making requests
      */
-    onRequested(callback) {
-        return body.onRequested(callback);
-    }
+    onRequested(callback: onRequested): void;
     /**
      * On Requesting
      *
@@ -103,9 +110,17 @@ export default class Service {
      * @access public
      * @param callback The function to call before making requests
      */
-    onRequesting(callback) {
-        return body.onRequesting(callback);
-    }
+    onRequesting(callback: onRequesting): void;
+    /**
+     * On Warning
+     *
+     * Sets callback for whenever a request gets a warning back
+     *
+     * @name onWarning
+     * @access public
+     * @param callback The function to call if there's a warning
+     */
+    onWarning(callback: onWarning): void;
     /**
      * Read
      *
@@ -116,9 +131,7 @@ export default class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    read(noun, data = null) {
-        return body.request('read', this.service, noun, data);
-    }
+    read(noun: string, data?: any): Promise<any>;
     /**
      * Session
      *
@@ -129,9 +142,7 @@ export default class Service {
      * @param token The session to set
      * @returns the session set
      */
-    session(token) {
-        return body.session(token);
-    }
+    session(token?: string | null): string | null | void;
     /**
      * Update
      *
@@ -142,7 +153,5 @@ export default class Service {
      * @param noun The noun to call on the service
      * @param data The data associated with the request
      */
-    update(noun, data = null) {
-        return body.request('update', this.service, noun, data);
-    }
+    update(noun: string, data?: any): Promise<any>;
 }

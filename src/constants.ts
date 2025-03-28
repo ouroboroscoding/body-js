@@ -9,9 +9,10 @@
  */
 
 // Empty UUID
-export const EMPTY_UUID = '00000000-0000-4000-8000-000000000000'
+export const EMPTY_TUUID = '00000000000040008000000000000000';
+export const EMPTY_UUID = '00000000-0000-4000-8000-000000000000';
 
 // Seconds
-export const SECONDS_HOUR = 3600
-export const SECONDS_DAY = 86400
-export const SECONDS_WEEK = 604800
+export const SECONDS_HOUR = 3600;
+export const SECONDS_DAY = 86400;
+export const SECONDS_WEEK = 604800;

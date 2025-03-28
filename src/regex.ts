@@ -9,7 +9,7 @@
  */
 
 // E-Mail address
-export const EMAIL_ADDRESS = /[^@\s]+@[^@\s]+\.[a-zA-Z0-9]{2,}$/
+export const EMAIL_ADDRESS = /^[^@\s]+@[^@\s]+\.[a-zA-Z0-9]{2,}$/
 
 // North American Phone Number
-export const PHONE_NUMBER_NA = /\+?1?[ -]?\(?(\d{3})\)?[ -]?(\d{3})[ -]?(\d{4})/
+export const PHONE_NUMBER_NA = /^\+?1?[ -]?\(?(\d{3})\)?[ -]?(\d{3})[ -]?(\d{4})$/
