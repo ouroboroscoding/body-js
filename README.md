@@ -132,7 +132,7 @@ with the `action` substituted for the function name. So the `body.read` call in
 the [example](#body) could have also been written as
 ```javascript
     body.request(
-	  'read',
+      'read',
       'my_service',
       'my_request',
       {  _id: 'someid' }
@@ -152,10 +152,10 @@ etc.
 ```javascript
 import body from '@ouroboros/body';
 body.on({
-	error: (error, info) => {},
-	errorCode: (error, info) => {},
-	noSession: () => {},
-	warning: (warning, info) => {}
+  error: (error, info) => {},
+  errorCode: (error, info) => {},
+  noSession: () => {},
+  warning: (warning, info) => {}
 });
 ```
 
