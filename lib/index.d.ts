@@ -7,17 +7,16 @@
  * @copyright Ouroboros Coding Inc.
  * @created 2023-03-03
  */
-import XMLHttpRequest from 'xhr2';
 import * as constants from './constants';
 import * as errors from './errors';
 import * as regex from './regex';
 export { constants, errors, regex };
 export { default as Service } from './Service';
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
-export type callbackOptions = 'error' | 'errorCode' | 'requested' | 'requesting' | 'warning';
 export type onCallbacks = {
     error?: onError;
     errorCode?: onErrorCode;
+    noSession?: () => void;
     requested?: onRequested;
     requesting?: onRequesting;
     warning?: onWarning;
@@ -30,14 +29,12 @@ export type onRequestedStruct = {
     data: any;
     res?: responseStruct;
     url: string;
-    xhr: XMLHttpRequest;
 };
 export type onRequesting = (info: onRequestingStruct) => void;
 export type onRequestingStruct = {
     action: actionOptions;
     data: any;
     url: string;
-    xhr: XMLHttpRequest;
 };
 export type onWarning = (warning: any, info: onRequestedStruct) => void;
 export type responseStruct = {
@@ -48,7 +45,6 @@ export type responseStruct = {
 export type responseErrorStruct = {
     code: number;
     msg?: any;
-    handle?: (message: string) => void;
 };
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => boolean;
@@ -68,18 +64,18 @@ declare class Body {
     private requested;
     private requesting;
     private token;
-    private verbose;
     private warning;
     /**
      * Domain
      *
-     * Set the domain
+     * Sets/Gets the domain
      *
      * @name domain
      * @access public
-     * @param domain The name of the domain to connect to
+     * @param @param domain The domain to set
+     * @returns the domain set
      */
-    domain(domain: string): void;
+    domain(domain?: string): string | void;
     /**
      * Request
      *
@@ -87,6 +83,7 @@ declare class Body {
      *
      * @name request
      * @access public
+     * @param action The action to take in the call
      * @param service The service to call
      * @param noun The noun to call on the service
      * @param data The data associated with the request
@@ -141,7 +138,7 @@ declare class Body {
      *
      * Sets callback for whenever a request gets an error back
      *
-     * @name onNoSession
+     * @name onErrorCode
      * @access public
      * @param callback The function to call if there's an error
      */
@@ -177,6 +174,16 @@ declare class Body {
      */
     onRequesting(callback: onRequesting): void;
     /**
+     * On Warning
+     *
+     * Sets callback for whenever a request gets a warning back
+     *
+     * @name onWarning
+     * @access public
+     * @param callback The function to call if there's a warning
+     */
+    onWarning(callback: onWarning): void;
+    /**
      * Read
      *
      * Calls a read (GET) request on the service given
@@ -211,24 +218,6 @@ declare class Body {
      * @param data The data associated with the request
      */
     update(service: string, noun: string, data?: any): Promise<any>;
-    /**
-     * Verbose Off
-     *
-     * Called to turn verbose mode off
-     *
-     * @name verbose_off
-     * @access
-     */
-    verbose_off(): void;
-    /**
-     * Verbose On
-     *
-     * Called to turn verbose mode on
-     *
-     * @name verbose_on
-     * @access
-     */
-    verbose_on(): void;
 }
 declare const body: Body;
 export default body;

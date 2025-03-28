@@ -8,9 +8,6 @@
  * @created 2023-03-03
  */
 
-// NPM modules
-import XMLHttpRequest from 'xhr2';
-
 // Import const files
 import * as constants from './constants';
 import * as errors from './errors';
@@ -22,10 +19,10 @@ export { default as Service } from './Service';
 
 // Types
 export type actionOptions = 'create' | 'delete' | 'read' | 'update';
-export type callbackOptions = 'error' | 'errorCode' | 'requested' | 'requesting' | 'warning';
 export type onCallbacks = {
 	error?: onError,
 	errorCode?: onErrorCode,
+	noSession?: () => void
 	requested?: onRequested,
 	requesting?: onRequesting,
 	warning?: onWarning
@@ -37,15 +34,13 @@ export type onRequestedStruct = {
 	action: actionOptions,
 	data: any,
 	res?: responseStruct,
-	url: string,
-	xhr: XMLHttpRequest
+	url: string
 };
 export type onRequesting = (info: onRequestingStruct) => void;
 export type onRequestingStruct = {
 	action: actionOptions,
 	data: any,
-	url: string,
-	xhr: XMLHttpRequest
+	url: string
 };
 export type onWarning = (warning: any, info: onRequestedStruct) => void;
 export type responseStruct = {
@@ -55,14 +50,13 @@ export type responseStruct = {
 };
 export type responseErrorStruct = {
 	code: number,
-	msg?: any,
-	handle?: (message: string) => void
+	msg?: any
 }
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => boolean;
 
 // Actions to methods
-const ACTIONS_TO_METHODS = {
+const METHODS = {
 	create: 'POST',
 	delete: 'DELETE',
 	read: 'GET',
@@ -80,7 +74,7 @@ const ACTIONS_TO_METHODS = {
 class Body {
 
 	// The domain used to make requests to
-	private _domain: string = '';
+	private _domain: string = 'localhost';
 
 	// The function to call for http and related errors that need to be reported
 	private error: onError | null = null;
@@ -89,7 +83,7 @@ class Body {
 	private errorCode: onErrorCode | null = null;
 
 	// The function to call when we get a status 401, or error code
-	//	REST_AUTHORIZATION
+	//  REST_AUTHORIZATION
 	private noSession: (() => void) | null = null;
 
 	// The function to call after any request is sent
@@ -101,23 +95,30 @@ class Body {
 	// The token associated with the current session
 	private token: string | null = null;
 
-	// Flag for being verbose
-	private verbose: boolean = false;
-
 	// The function to call if we get body warnings
 	private warning: onWarning | null = null;
 
 	/**
 	 * Domain
 	 *
-	 * Set the domain
+	 * Sets/Gets the domain
 	 *
 	 * @name domain
 	 * @access public
-	 * @param domain The name of the domain to connect to
+	 * @param @param domain The domain to set
+	 * @returns the domain set
 	 */
-	domain(domain: string): void {
-		this._domain = domain;
+	domain(domain?: string): string | void {
+
+		// If we are getting the token
+		if(domain === undefined) {
+			return this._domain;
+		}
+
+		// Else, we are setting the token
+		else {
+			this._domain = domain;
+		}
 	}
 
 	/**
@@ -127,162 +128,158 @@ class Body {
 	 *
 	 * @name request
 	 * @access public
+	 * @param action The action to take in the call
 	 * @param service The service to call
 	 * @param noun The noun to call on the service
 	 * @param data The data associated with the request
 	 */
-	request(action: actionOptions, service: string, noun: string, data: any): Promise<any> {
+	request(
+		action: actionOptions,
+		service: string,
+		noun: string,
+		data: any
+	): Promise<any> {
 
 		// Generate the URL for the request
 		let url = `https://${this._domain}/${service}/${noun}`;
 
-		// Init the response object
+		// Init the response and json variables
 		let res: responseStruct;
+		let json: string;
+
+		// If we got data
+		if(data !== null) {
+
+			// If we're in GET mode, append the data as a param "d" after
+			//  turning it into JSON
+			if(action === 'read') {
+				url += '?d=' + encodeURIComponent(JSON.stringify(data));
+			} else {
+				json = JSON.stringify(data);
+			}
+		}
 
 		// Set this
-		const $this = this;
+		const _ = this;
+
+		// Handles an error based on whether an error handler is set
+		function handleError(message: string): void {
+			if(_.error) {
+				_.error(message, { action, data, url });
+			} else {
+				throw new Error(message);
+			}
+		}
 
 		// Create a new Promise and return it
 		return new Promise((resolve: responseResolve, reject) => {
 
-			// Create a new XMLHttpRequest
-			const xhr: XMLHttpRequest = new XMLHttpRequest();
-
-			// Handles an error based on whether an error handler is set
-			function handleError(message: string): void {
-				if($this.error) {
-					$this.error(message, { action, data, res, url, xhr });
-				} else {
-					throw new Error(message);
+			// Init the fetch init
+			const fetchInit: any = {
+				method: METHODS[action],
+				headers: {
+					'Content-Type': 'application/json; charset=utf-8'
 				}
 			}
-
-			// Track abort
-			xhr.addEventListener('abort', event => {
-				if(this.verbose) {
-					console.log(`xhr.abort:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
-				}
-				handleError(`${ACTIONS_TO_METHODS[action]} ${url} was aborted`)
-			});
-
-			// Track errors
-			xhr.addEventListener('error', event => {
-				if(this.verbose) {
-					console.log(`xhr.error:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
-				}
-				handleError(`${ACTIONS_TO_METHODS[action]} ${url} failed to connect`);
-			});
-
-			// Handle successful request
-			xhr.addEventListener('load', event => {
-				if(this.verbose) {
-					console.log(`xhr.load:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
-				}
-
-				// If we got anything other than 200
-				if(xhr.status !== 200) {
-
-					// If it's 401
-					if(xhr.status === 401) {
-
-						// If we have a no session callback
-						if(this.noSession) {
-							return this.noSession();
-						} else {
-							throw new Error(`${ACTIONS_TO_METHODS[action]} ${url} return 401 NOT AUTHORIZED`);
-						}
-					}
-
-					// Else, invalid status
-					else {
-						handleError(`${ACTIONS_TO_METHODS[action]} ${url} returned invalid status: ${xhr.status}`);
-					}
-				}
-
-				// If the Content-Type is missing or invalid
-				const contentType = xhr.getResponseHeader('Content-Type');
-				if(!contentType || contentType !== 'application/json; charset=utf-8') {
-					handleError(`${ACTIONS_TO_METHODS[action]} ${url} returned invalid Content-Type: ${contentType}`);
-				}
-
-				// Convert the text from JSON
-				res = JSON.parse(xhr.responseText);
-
-				// If the JSON failed to parse
-				if(!res) {
-					handleError(`${ACTIONS_TO_METHODS[action]} ${url} returned invalid JSON: ${xhr.responseText}`);
-				}
-
-				// If we got an error
-				if('error' in res && res.error) {
-
-					// Add the handle error function to it
-					res.error.handle = handleError;
-
-					// If we don't have an onErrorCode callback, or it we do and
-					//	calling it returns false
-					if(!this.errorCode || this.errorCode(res.error as responseErrorStruct, { action, data, res, url, xhr }) === false) {
-						return reject(res.error);
-					}
-				}
-
-				// If we got data
-				if('data' in res) {
-
-					// Resolve it
-					return resolve(res.data);
-				}
-			});
-
-			// Handle the request being finished
-			xhr.addEventListener('loadend', event => {
-				if(this.verbose) {
-					console.log(`xhr.loadend:\n\t${ACTIONS_TO_METHODS[action]} ${url}\n\t`, event);
-				}
-
-				// If we have a requested callback
-				if(this.requested) {
-					this.requested({ action, data, res, url, xhr });
-				}
-			});
-
-			// Init the request body
-			let xml = '';
-
-			// If we got data
-			if(data !== null) {
-
-				// If we're in GET mode
-				if(action === 'read') {
-
-					// Append the data as a param
-					url += '?d=' + encodeURIComponent(JSON.stringify(data));
-				}
-
-				// Else, DELETE, POST, PUT, just encode the data
-				else {
-					xml = JSON.stringify(data);
-				}
-			}
-
-			// Open the request
-			xhr.open(ACTIONS_TO_METHODS[action], url);
 
 			// If we have a session token, add it as the Authorization header
-			if(this.token) {
-				xhr.setRequestHeader('Authorization', this.token);
+			if(_.token) {
+				fetchInit.headers.Authorization = _.token;
 			}
 
-			// Set the Content-Type header
-			xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+			// If we have JSON
+			if(json) {
+				fetchInit.body = json;
+			}
 
 			// If we have a requesting callback, call it
 			if(this.requesting) {
-				this.requesting({ action, data, url, xhr });
+				this.requesting({ action, data, url });
 			}
 
-			// Send the request
-			xhr.send(xml);
+			// Make the call
+			fetch(url, fetchInit).then(response => {
+
+				// If 2xx
+				if(response.ok) {
+
+					// If the Content-Type is missing or invalid
+					const ct = response.headers.get('Content-Type');
+					if(!ct || ct !== 'application/json; charset=utf-8') {
+						handleError(
+							`${METHODS[action]} ${url} returned invalid Content-Type: ${ct}`
+						);
+					}
+
+					// Return the JSON
+					return response.json();
+				}
+
+				// If it's 401
+				if(response.status === 401) {
+
+					// If we have a no session callback
+					if(_.noSession) {
+						return _.noSession();
+					} else {
+						throw new Error(
+							`${METHODS[action]} ${url} return 401 NOT AUTHORIZED`
+						);
+					}
+				}
+				// Else, invalid status
+				else {
+					handleError(
+						`${METHODS[action]} ${url} returned invalid status: ${response.status}`
+					);
+				}
+
+			}).then(result => {
+
+				// Set res
+				res = result;
+
+				// If we got an error
+				if('error' in result && result.error) {
+
+					// If we don't have an onErrorCode callback, or we do and
+					//  calling it returns false
+					if(!_.errorCode ||
+						_.errorCode(
+							result.error as responseErrorStruct,
+							{ action, data, res, url }
+						) === false
+					) {
+						return reject(result.error);
+					}
+				}
+
+				// If we got a warning and we have an onWarning callback
+				if('warning' in result && result.warning && _.warning) {
+					_.warning(
+						result.warning, { action, data, res, url }
+					);
+				}
+
+				// If we got data
+				if('data' in result) {
+
+					// Resolve it
+					return resolve(result.data);
+				}
+
+			}).catch(reason => {
+				handleError(
+					`${METHODS[action]} ${url} failed because of "${reason}"`
+				)
+
+			}).finally(() => {
+
+				// If we have a requested callback
+				if(this.requested) {
+					this.requested({ action, data, res, url });
+				}
+			})
 		});
 	}
 
@@ -334,6 +331,9 @@ class Body {
 				case 'errorCode':
 					this.errorCode = callbacks.errorCode as onErrorCode;
 					continue;
+				case 'noSession':
+					this.noSession = callbacks.noSession as () => void;
+					continue;
 				case 'requested':
 					this.requested = callbacks.requested as onRequested;
 					continue;
@@ -372,7 +372,7 @@ class Body {
 	 *
 	 * Sets callback for whenever a request gets an error back
 	 *
-	 * @name onNoSession
+	 * @name onErrorCode
 	 * @access public
 	 * @param callback The function to call if there's an error
 	 */
@@ -448,6 +448,26 @@ class Body {
 	}
 
 	/**
+	 * On Warning
+	 *
+	 * Sets callback for whenever a request gets a warning back
+	 *
+	 * @name onWarning
+	 * @access public
+	 * @param callback The function to call if there's a warning
+	 */
+	onWarning(callback: onWarning): void {
+
+		// Make sure the callback is function
+		if(typeof callback !== 'function') {
+			throw new Error('onWarning() called with an invalid callback');
+		}
+
+		// Set the callback
+		this.warning = callback;
+	}
+
+	/**
 	 * Read
 	 *
 	 * Calls a read (GET) request on the service given
@@ -498,30 +518,6 @@ class Body {
 	 */
 	update(service: string, noun: string, data: any = null): Promise<any> {
 		return this.request('update', service, noun, data);
-	}
-
-	/**
-	 * Verbose Off
-	 *
-	 * Called to turn verbose mode off
-	 *
-	 * @name verbose_off
-	 * @access
-	 */
-	verbose_off(): void {
-		this.verbose = false;
-	}
-
-	/**
-	 * Verbose On
-	 *
-	 * Called to turn verbose mode on
-	 *
-	 * @name verbose_on
-	 * @access
-	 */
-	verbose_on(): void {
-		this.verbose = true;
 	}
 }
 

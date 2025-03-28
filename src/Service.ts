@@ -12,7 +12,9 @@
 import body from './';
 
 // Types
-import { onError, onErrorCode, onRequested, onRequesting } from './';
+import {
+	onCallbacks, onError, onErrorCode, onRequested, onRequesting, onWarning
+} from './';
 
 /**
  * Service
@@ -71,6 +73,33 @@ export default class Service {
 	}
 
 	/**
+	 * Domain
+	 *
+	 * Set/Gets the current domain
+	 *
+	 * @name domain
+	 * @access public
+	 * @param domain The domain to make all calls to
+	 * @returns void
+	 */
+	domain(domain?: string): void | string {
+		return body.domain(domain);
+	}
+
+	/**
+	 * On
+	 *
+	 * Called to set multiple events at once
+	 *
+	 * @name on
+	 * @access public
+	 * @param callbacks A name to callback object to set multiple events
+	 */
+	on(callbacks: onCallbacks): void {
+		return body.on(callbacks);
+	}
+
+	/**
 	 * On Error
 	 *
 	 * Sets callback for whenever body has an error
@@ -118,6 +147,19 @@ export default class Service {
 	 */
 	onRequesting(callback: onRequesting): void {
 		return body.onRequesting(callback);
+	}
+
+	/**
+	 * On Warning
+	 *
+	 * Sets callback for whenever a request gets a warning back
+	 *
+	 * @name onWarning
+	 * @access public
+	 * @param callback The function to call if there's a warning
+	 */
+	onWarning(callback: onWarning): void {
+		return body.onWarning(callback);
 	}
 
 	/**
