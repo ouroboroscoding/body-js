@@ -1,6 +1,6 @@
 {
 	"name": "@ouroboros/body",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"description": "Classes to communicate with Ouroboros Coding Inc. body services",
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",

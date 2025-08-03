@@ -1,5 +1,8 @@
 # @ouroboros/body releases
 
+## 1.2.1
+- Fixed issue where 401 Unauthorized issues weren't properly handled causing thrown errors.
+
 ## 1.2.0
 - Moved generated .js and .d.ts files into lib/ instead of build/, this changes the "main" from "build/index.js" to "lib/index.js".
 - Removed `xhr2` from the project and replaced `XMLHttpRequest` with `fetch`.
