@@ -220,7 +220,8 @@ class Body {
 
 					// If we have a no session callback
 					if(_.noSession) {
-						return _.noSession();
+						_.noSession();
+						return Promise.resolve();
 					} else {
 						throw new Error(
 							`${METHODS[action]} ${url} return 401 NOT AUTHORIZED`
@@ -235,6 +236,11 @@ class Body {
 				}
 
 			}).then(result => {
+
+				// If there's no result, do nothing
+				if(!result) {
+					return;
+				}
 
 				// Set res
 				res = result;
