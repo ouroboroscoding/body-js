@@ -1,7 +1,10 @@
 # @ouroboros/body releases
 
+## 1.2.2
+- Fixed issue where `finally` not being called on Promises if 401 Not Authorized is returned.
+
 ## 1.2.1
-- Fixed issue where 401 Unauthorized issues weren't properly handled causing thrown errors.
+- Fixed issue where 401 Not Authorized issues weren't properly handled causing thrown errors.
 
 ## 1.2.0
 - Moved generated .js and .d.ts files into lib/ instead of build/, this changes the "main" from "build/index.js" to "lib/index.js".
