@@ -221,7 +221,7 @@ class Body {
 					// If we have a no session callback
 					if(_.noSession) {
 						_.noSession();
-						return Promise.resolve();
+						return reject({ code: 0, msg: '401 Not Authorized' });
 					} else {
 						throw new Error(
 							`${METHODS[action]} ${url} return 401 NOT AUTHORIZED`
