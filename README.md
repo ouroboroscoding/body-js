@@ -70,7 +70,13 @@ function MyApp() {
       'my_service',
       'my_request',
       {  _id: 'someid' }
-    ).then(setData, setError);
+    ).then(res => {
+      if(res.error) {
+        setError(res.error);
+      } else {
+        setData(res.data);
+      }
+    });
   }
 
   return <>
@@ -136,7 +142,13 @@ the [example](#body) could have also been written as
       'my_service',
       'my_request',
       {  _id: 'someid' }
-    ).then(setData, setError);
+    ).then(res => {
+      if(res.error) {
+        setError(res.error);
+      } else {
+        setData(res.data);
+      }
+    });
 ```
 
 [ [top](#ouroborosbody), [contents](#contents), [body](#body) ]
@@ -289,17 +301,17 @@ body.read(
   'my_service',
   'my/request',
   { _id: 'someid' }
-).then(res => {},
-  error => {
-    if(error.code === errors.DATA_FIELDS) {
+).then(res => {
+  if(res.error) {
+    if(res.error.code === errors.DATA_FIELDS) {
       // Bad data sent to request
-    } else if(error.code === errors.DB_NO_RECORD) {
+    } else if(res.error.code === errors.DB_NO_RECORD) {
       // Bad ID, no such record
     } else {
       // Unknown error code
     }
   }
-)
+})
 ```
 
 [ [top](#ouroborosbody), [contents](#contents) ]

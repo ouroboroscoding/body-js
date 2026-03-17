@@ -36,7 +36,7 @@ export type onRequestingStruct = {
     data: any;
     url: string;
 };
-export type onWarning = (warning: any, info: onRequestedStruct) => void;
+export type onWarning = (warning: any, info: onRequestedStruct) => void | false;
 export type responseStruct = {
     data?: any;
     error?: responseErrorStruct;
@@ -47,7 +47,7 @@ export type responseErrorStruct = {
     msg?: any;
 };
 export type responseResolve = (res: responseStruct) => void;
-export type responseReject = (error: responseErrorStruct) => boolean;
+export type responseReject = (error: responseErrorStruct) => void;
 /**
  * Body
  *

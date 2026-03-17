@@ -42,7 +42,7 @@ export type onRequestingStruct = {
 	data: any,
 	url: string
 };
-export type onWarning = (warning: any, info: onRequestedStruct) => void;
+export type onWarning = (warning: any, info: onRequestedStruct) => void | false;
 export type responseStruct = {
 	data?: any,
 	error?: responseErrorStruct,
@@ -53,7 +53,7 @@ export type responseErrorStruct = {
 	msg?: any
 }
 export type responseResolve = (res: responseStruct) => void;
-export type responseReject = (error: responseErrorStruct) => boolean;
+export type responseReject = (error: responseErrorStruct) => void;
 
 // Actions to methods
 const METHODS = {
@@ -206,9 +206,9 @@ class Body {
 					// If the Content-Type is missing or invalid
 					const ct = response.headers.get('Content-Type');
 					if(!ct || ct !== 'application/json; charset=utf-8') {
-						handleError(
-							`${METHODS[action]} ${url} returned invalid Content-Type: ${ct}`
-						);
+						const err = `${METHODS[action]} ${url} returned invalid Content-Type: ${ct}`
+						handleError(err);
+						return reject({ code: 0, msg: err });
 					}
 
 					// Return the JSON
@@ -216,23 +216,21 @@ class Body {
 				}
 
 				// If it's 401
-				if(response.status === 401) {
+				else if(response.status === 401) {
 
 					// If we have a no session callback
 					if(_.noSession) {
 						_.noSession();
-						return reject({ code: 0, msg: '401 Not Authorized' });
-					} else {
-						throw new Error(
-							`${METHODS[action]} ${url} return 401 NOT AUTHORIZED`
-						);
 					}
+
+					// Reject the request
+					return reject({ code: 0, msg: `${METHODS[action]} ${url} return 401 NOT AUTHORIZED` });
 				}
 				// Else, invalid status
 				else {
-					handleError(
-						`${METHODS[action]} ${url} returned invalid status: ${response.status}`
-					);
+					const err = `${METHODS[action]} ${url} returned invalid status: ${response.status}`;
+					handleError(err);
+					return reject({ code: 0, msg: err });
 				}
 
 			}).then(result => {
@@ -245,6 +243,9 @@ class Body {
 				// Set res
 				res = result;
 
+				// Init the structure to pass to resolve
+				const oResult: responseStruct = { };
+
 				// If we got an error
 				if('error' in result && result.error) {
 
@@ -256,23 +257,36 @@ class Body {
 							{ action, data, res, url }
 						) === false
 					) {
-						return reject(result.error);
+						// If it wasn't handled, add it to the result
+						oResult.error = structuredClone(result.error);
 					}
 				}
 
 				// If we got a warning and we have an onWarning callback
 				if('warning' in result && result.warning && _.warning) {
-					_.warning(
-						result.warning, { action, data, res, url }
-					);
+
+					// If we don't have an onWarning callback, or we do and
+					//  calling it returns false
+					if(!_.warning ||
+						_.warning(
+							result.warning,
+							{ action, data, res, url }
+						) === false
+					) {
+						// If it wasn't handled, add it to the result
+						oResult.warning = structuredClone(result.warning);
+					}
 				}
 
 				// If we got data
 				if('data' in result) {
 
-					// Resolve it
-					return resolve(result.data);
+					// Add it
+					oResult.data = structuredClone(result.data);
 				}
+
+				// Resolve
+				return resolve(oResult);
 
 			}).catch(reason => {
 				handleError(
