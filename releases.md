@@ -1,7 +1,7 @@
 # @ouroboros/body releases
 
-## ?.?.?
-- Stopped splitting data and error into resolve and reject as this made it harder to identify and solve real communication problems. From now on all requests that are returned successfully, regardless of the result, are returned in full to resolve. This means all current `.then()` calls on requests must handle the full responseStruct result instead of just the `.data`. Similarly, any code currently running in the reject based on completed, but error filled, requests must be moved into the first argument of `.then()`
+## 1.3.0
+- Stopped splitting data and error into resolve and reject as this made it harder to identify and solve real communication problems. From now on all requests that are returned successfully, regardless of the result, are returned in full to resolve. This means all current `.then()` calls on requests must handle the full responseStruct result instead of just the `.data`. Similarly, any code currently running in the reject based on completed, but error filled, requests must be moved into the first argument of `.then()`.
 
 ## 1.2.2
 - Fixed issue where `finally` not being called on Promises if 401 Not Authorized is returned.
