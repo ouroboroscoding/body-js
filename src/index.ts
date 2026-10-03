@@ -63,6 +63,9 @@ const METHODS = {
 	update: 'PUT'
 }
 
+// 30 second timeout
+const REQUEST_TIMEOUT = 30000;
+
 /**
  * Body
  *
@@ -140,6 +143,14 @@ class Body {
 		data: any
 	): Promise<any> {
 
+		// If no error handler was assigned
+		if(!this.error) {
+			throw new Error(
+				'Must assign an error handler via body.on(\'error\', handler)' +
+				' or body.onError(handler)'
+			)
+		}
+
 		// Generate the URL for the request
 		let url = `https://${this._domain}/${service}/${noun}`;
 
@@ -162,25 +173,38 @@ class Body {
 		// Set this
 		const _ = this;
 
-		// Handles an error based on whether an error handler is set
-		function handleError(message: string): void {
-			if(_.error) {
-				_.error(message, { action, data, url });
-			} else {
-				throw new Error(message);
-			}
-		}
-
 		// Create a new Promise and return it
 		return new Promise((resolve: responseResolve, reject) => {
 
+			// Handle errors the same way every time
+			function handleError(reason: string): void {
+
+				// Generate the error message
+				const err: string = `${METHODS[action]} ${url} ${reason}`;
+
+				// Call the error handler
+				(_.error as onError)(err, { action, data, url });
+
+				// Return reject path
+				return reject({ code: 0, msg: err });
+			}
+
+			// Create an abort controller for timeouts
+			const controller = new AbortController()
+
 			// Init the fetch init
 			const fetchInit: any = {
-				method: METHODS[action],
 				headers: {
 					'Content-Type': 'application/json; charset=utf-8'
-				}
+				},
+				method: METHODS[action],
+				signal: controller.signal
 			}
+
+			// Start a timer so we timeout if the request doesn't return
+			const timer = setTimeout(() => {
+				controller.abort();
+			}, REQUEST_TIMEOUT);
 
 			// If we have a session token, add it as the Authorization header
 			if(_.token) {
@@ -206,13 +230,67 @@ class Body {
 					// If the Content-Type is missing or invalid
 					const ct = response.headers.get('Content-Type');
 					if(!ct || ct !== 'application/json; charset=utf-8') {
-						const err = `${METHODS[action]} ${url} returned invalid Content-Type: ${ct}`
-						handleError(err);
-						return reject({ code: 0, msg: err });
+						return handleError(`returned invalid Content-Type: "${ct}"`);
 					}
 
 					// Return the JSON
-					return response.json();
+					return response.json().then(result => {
+
+						// If there's no result, return an error + reject
+						if(!result) {
+							return handleError('returned: empty JSON');
+						}
+
+						// Set res
+						res = result;
+
+						// Init the structure to pass to resolve
+						const oResult: responseStruct = { };
+
+						// If we got an error
+						if('error' in result && result.error) {
+
+							// If we don't have an onErrorCode callback, or we
+							//	do and calling it returns false
+							if(!_.errorCode ||
+								_.errorCode(
+									result.error as responseErrorStruct,
+									{ action, data, res, url }
+								) === false
+							) {
+								// If it wasn't handled, add it to the result
+								oResult.error = structuredClone(result.error);
+							}
+						}
+
+						// If we got a warning
+						if('warning' in result && result.warning) {
+
+							// If we don't have an onWarning callback, or we do
+							//	and calling it returns false
+							if(!_.warning ||
+								_.warning(
+									result.warning,
+									{ action, data, res, url }
+								) === false
+							) {
+								// If it wasn't handled, add it to the result
+								oResult.warning = structuredClone(
+									result.warning
+								);
+							}
+						}
+
+						// If we got data
+						if('data' in result) {
+
+							// Add it
+							oResult.data = structuredClone(result.data);
+						}
+
+						// Resolve
+						return resolve(oResult);
+					});
 				}
 
 				// If it's 401
@@ -224,76 +302,18 @@ class Body {
 					}
 
 					// Reject the request
-					return reject({ code: 0, msg: `${METHODS[action]} ${url} return 401 NOT AUTHORIZED` });
+					return handleError('returned: 401 NOT AUTHORIZED');
 				}
+
 				// Else, invalid status
-				else {
-					const err = `${METHODS[action]} ${url} returned invalid status: ${response.status}`;
-					handleError(err);
-					return reject({ code: 0, msg: err });
-				}
-
-			}).then(result => {
-
-				// If there's no result, do nothing
-				if(!result) {
-					return;
-				}
-
-				// Set res
-				res = result;
-
-				// Init the structure to pass to resolve
-				const oResult: responseStruct = { };
-
-				// If we got an error
-				if('error' in result && result.error) {
-
-					// If we don't have an onErrorCode callback, or we do and
-					//  calling it returns false
-					if(!_.errorCode ||
-						_.errorCode(
-							result.error as responseErrorStruct,
-							{ action, data, res, url }
-						) === false
-					) {
-						// If it wasn't handled, add it to the result
-						oResult.error = structuredClone(result.error);
-					}
-				}
-
-				// If we got a warning and we have an onWarning callback
-				if('warning' in result && result.warning && _.warning) {
-
-					// If we don't have an onWarning callback, or we do and
-					//  calling it returns false
-					if(!_.warning ||
-						_.warning(
-							result.warning,
-							{ action, data, res, url }
-						) === false
-					) {
-						// If it wasn't handled, add it to the result
-						oResult.warning = structuredClone(result.warning);
-					}
-				}
-
-				// If we got data
-				if('data' in result) {
-
-					// Add it
-					oResult.data = structuredClone(result.data);
-				}
-
-				// Resolve
-				return resolve(oResult);
+				return handleError(`returned: invalid status ${response.status}`);
 
 			}).catch(reason => {
-				handleError(
-					`${METHODS[action]} ${url} failed because of "${reason}"`
-				)
-
+				return handleError(`failed with: "${String(reason)}"`);
 			}).finally(() => {
+
+				// Clear the timeout timer
+				clearTimeout(timer);
 
 				// If we have a requested callback
 				if(this.requested) {
