@@ -67,6 +67,19 @@ const METHODS = {
 const REQUEST_TIMEOUT = 30000;
 
 /**
+ * Uses Cookie Sessions
+ *
+ * Effectively checks if we're in a browser or not
+ *
+ * @name usesCookieSession
+ * @returns boolean
+ */
+export function usesCookieSession() {
+	return typeof document !== 'undefined'
+		&& typeof document.cookie === 'string';
+}
+
+/**
  * Body
  *
  * The primary module class which handles communication with body services on
@@ -199,6 +212,11 @@ class Body {
 				},
 				method: METHODS[action],
 				signal: controller.signal
+			}
+
+			// If we're in a browser or some other client that uses cookies
+			if(usesCookieSession()) {
+				fetchInit.credentials = 'include';
 			}
 
 			// Start a timer so we timeout if the request doesn't return
