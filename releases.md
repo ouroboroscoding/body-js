@@ -1,5 +1,8 @@
 # @ouroboros/body releases
 
+## 1.3.2
+- Added setting of "credentials: 'include'" when in browser mode.
+
 ## 1.3.1
 - Fixed issues with requests potentially not resolving promises on errors.
 - Added 30 second timeout on requests so they don't hang forever.
