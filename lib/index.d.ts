@@ -49,6 +49,15 @@ export type responseErrorStruct = {
 export type responseResolve = (res: responseStruct) => void;
 export type responseReject = (error: responseErrorStruct) => void;
 /**
+ * Uses Cookie Sessions
+ *
+ * Effectively checks if we're in a browser or not
+ *
+ * @name usesCookieSession
+ * @returns boolean
+ */
+export declare function usesCookieSession(): boolean;
+/**
  * Body
  *
  * The primary module class which handles communication with body services on
